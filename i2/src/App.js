@@ -34,6 +34,7 @@ function App() {
   const [selectedIds, setSelectedIds] = React.useState([]);
   const [sortField, setSortField] = React.useState('slno');
   const [sortOrder, setSortOrder] = React.useState('asc'); // 'asc' or 'desc'
+  const [searchTerm, setSearchTerm] = React.useState('');
 
   React.useEffect(() => {
     const auth = getAuth();
@@ -199,7 +200,12 @@ function App() {
 
   // Sort inventoryList before rendering
   const sortedInventoryList = React.useMemo(() => {
-    const sorted = [...inventoryList].sort((a, b) => {
+    const withTotals = inventoryList.map(item => ({
+      ...item,
+      totalBuyPrice: Number(item.buyPrice) * Number(item.quantity),
+      totalSellPrice: Number(item.sellPrice) * Number(item.quantity)
+    }));
+    const sorted = [...withTotals].sort((a, b) => {
       let aValue = a[sortField];
       let bValue = b[sortField];
       if (typeof aValue === 'string') aValue = aValue.toLowerCase();
@@ -218,6 +224,36 @@ function App() {
       setSortField(field);
       setSortOrder('asc');
     }
+  };
+
+  const handleExportCSV = () => {
+    if (inventoryList.length === 0) {
+      setInventoryError('No items to export.');
+      return;
+    }
+    const filtered = sortedInventoryList.filter(item => item.productName.toLowerCase().includes(searchTerm.toLowerCase()));
+    const csvRows = [
+      ['Sl. No', 'Name', 'Quantity', 'Buy Price', 'Sell Price', 'Total Buy Price', 'Total Sell Price'],
+      ...filtered.map(item => [
+      item.slno,
+      item.productName,
+      item.quantity,
+      item.buyPrice,
+      item.sellPrice,
+      Number(item.buyPrice) * Number(item.quantity),
+      Number(item.sellPrice) * Number(item.quantity)
+      ])
+    ];
+    const csvContent = csvRows.map(row => row.map(String).map(v => '"' + v.replace(/"/g, '""') + '"').join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'inventory.csv';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -308,14 +344,29 @@ function App() {
               <Button type="submit" variant="contained" color="primary" fullWidth sx={{ mt: 2 }}>Save Item</Button>
             </form>
             {/* Inventory List Table */}
-            <Box sx={{ mt: 4, overflowX: 'auto', mb: 4 }}>
+            <Box sx={{ mt: 4, overflowX: 'auto', mb: 4, width: '100%' }}>
               <Typography variant="h6" fontWeight={500} align="center" sx={{ mb: 1 }}>Inventory Items</Typography>
-              {selectedIds.length > 0 && (
-                <Button color="error" variant="contained" size="small" sx={{ mb: 2 }} onClick={handleDeleteSelected}>
-                  Delete Selected
-                </Button>
-              )}
-              <Box component="table" sx={{ width: '100%', minWidth: 500, borderCollapse: 'collapse', background: '#fafbfc', borderRadius: 1, overflow: 'hidden', boxShadow: 1 }}>
+              <Box sx={{ display: 'flex', flexDirection: { xs: 'column', sm: 'row' }, alignItems: { sm: 'center' }, justifyContent: 'space-between', mb: 2, gap: 2 }}>
+                <TextField
+                  size="small"
+                  label="Search by Name"
+                  variant="outlined"
+                  sx={{ maxWidth: 250 }}
+                  value={searchTerm}
+                  onChange={e => setSearchTerm(e.target.value)}
+                />
+                <Box sx={{ display: 'flex', gap: 2 }}>
+                  <Button variant="outlined" onClick={handleExportCSV} sx={{ minWidth: 140 }}>
+                    Export CSV
+                  </Button>
+                  {selectedIds.length > 0 && (
+                    <Button color="error" variant="contained" size="small" onClick={handleDeleteSelected}>
+                      Delete Selected
+                    </Button>
+                  )}
+                </Box>
+              </Box>
+              <Box component="table" sx={{ width: '100%', minWidth: 900, borderCollapse: 'collapse', background: '#fafbfc', borderRadius: 1, overflow: 'auto', boxShadow: 1 }}>
                 <Box component="thead">
                   <Box component="tr" sx={{ bgcolor: '#f0f0f0' }}>
                     <Box component="th" sx={{ border: 1, borderColor: '#e0e0e0', p: 1.5, fontWeight: 600, fontSize: 15 }}>
@@ -336,18 +387,24 @@ function App() {
                     <Box component="th" sx={{ border: 1, borderColor: '#e0e0e0', p: 1.5, fontWeight: 600, fontSize: 15, cursor: 'pointer' }} onClick={() => handleSort('sellPrice')}>
                       Sell Price {sortField === 'sellPrice' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
                     </Box>
+                    <Box component="th" sx={{ border: 1, borderColor: '#e0e0e0', p: 1.5, fontWeight: 600, fontSize: 15, cursor: 'pointer' }} onClick={() => handleSort('totalBuyPrice')}>
+                      Total Buy Price {sortField === 'totalBuyPrice' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
+                    </Box>
+                    <Box component="th" sx={{ border: 1, borderColor: '#e0e0e0', p: 1.5, fontWeight: 600, fontSize: 15, cursor: 'pointer' }} onClick={() => handleSort('totalSellPrice')}>
+                      Total Sell Price {sortField === 'totalSellPrice' ? (sortOrder === 'asc' ? '▲' : '▼') : ''}
+                    </Box>
                     <Box component="th" sx={{ border: 1, borderColor: '#e0e0e0', p: 1.5, fontWeight: 600, fontSize: 15 }}>Edit</Box>
                   </Box>
                 </Box>
                 <Box component="tbody">
-                  {sortedInventoryList.length === 0 ? (
+                  {sortedInventoryList.filter(item => item.productName.toLowerCase().includes(searchTerm.toLowerCase())).length === 0 ? (
                     <Box component="tr">
-                      <Box component="td" colSpan={7} sx={{ textAlign: 'center', p: 2, color: '#888' }}>
+                      <Box component="td" colSpan={9} sx={{ textAlign: 'center', p: 2, color: '#888' }}>
                         No items found.
                       </Box>
                     </Box>
                   ) : (
-                    sortedInventoryList.map(item => (
+                    sortedInventoryList.filter(item => item.productName.toLowerCase().includes(searchTerm.toLowerCase())).map(item => (
                       <Box component="tr" key={item.id} sx={{ '&:nth-of-type(even)': { bgcolor: '#f9f9f9' } }}>
                         <Box component="td" sx={{ border: 1, borderColor: '#e0e0e0', p: 1.5 }}>
                           <input type="checkbox" checked={selectedIds.includes(item.id)} onChange={() => handleSelectRow(item.id)} />
@@ -380,6 +437,12 @@ function App() {
                           ) : (
                             item.sellPrice
                           )}
+                        </Box>
+                        <Box component="td" sx={{ border: 1, borderColor: '#e0e0e0', p: 1.5 }}>
+                          {Number(item.buyPrice) * Number(item.quantity)}
+                        </Box>
+                        <Box component="td" sx={{ border: 1, borderColor: '#e0e0e0', p: 1.5 }}>
+                          {Number(item.sellPrice) * Number(item.quantity)}
                         </Box>
                         <Box component="td" sx={{ border: 1, borderColor: '#e0e0e0', p: 1.5 }}>
                           {editId === item.id ? (
