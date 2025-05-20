@@ -1,0 +1,5 @@
+// .babelrc
+{
+  "presets": ["@babel/preset-env", "react-app"],
+  "plugins": ["@babel/plugin-proposal-logical-assignment-operators"]
+}

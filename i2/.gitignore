@@ -1,0 +1,36 @@
+
+
+# Logs
+logs
+*.log
+npm-debug.log*
+
+# Dependency directories
+/bower_components
+
+# Build output
+/dist
+/build
+
+# Environment files
+.env
+.env.local
+.env.*.local
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+
+# Coverage directory
+/coverage
+
+# Misc
+*.tgz
