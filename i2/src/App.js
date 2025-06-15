@@ -17,11 +17,8 @@ import AccountBalanceWalletIcon from '@mui/icons-material/AccountBalanceWallet';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend } from 'recharts';
 import { BarChart, Bar } from 'recharts';
 import dayjs from 'dayjs';
-<<<<<<< HEAD
-=======
 import Popover from '@mui/material/Popover';
 import InfoIcon from '@mui/icons-material/Info';
->>>>>>> 388b6d2 (deploy)
 
 function getSalesDataByRange(invoices, range) {
   const now = dayjs();
@@ -133,6 +130,8 @@ function App() {
     buyPrice: '',
     sellPrice: ''
   });
+   const [pwaAnchorEl, setPwaAnchorEl] = React.useState(null);
+  const [deferredPrompt, setDeferredPrompt] = React.useState(null);
   const [inventoryError, setInventoryError] = React.useState('');
   const [inventorySuccess, setInventorySuccess] = React.useState('');
   const [inventoryList, setInventoryList] = React.useState([]);
@@ -187,13 +186,6 @@ function App() {
   const [deleteInvoiceConfirmOpen, setDeleteInvoiceConfirmOpen] = React.useState(false);
   const [deleteInvoiceTargetId, setDeleteInvoiceTargetId] = React.useState(null);
 
-<<<<<<< HEAD
-=======
-  // PWA install popover state
-  const [pwaAnchorEl, setPwaAnchorEl] = React.useState(null);
-  const [deferredPrompt, setDeferredPrompt] = React.useState(null);
-
->>>>>>> 388b6d2 (deploy)
   React.useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, (user) => {
@@ -775,11 +767,7 @@ function App() {
 
   // Fetch and show saved business name and phone from DB on tab open
   React.useEffect(() => {
-<<<<<<< HEAD
-    if (value === 3 && user) {
-=======
     if (user) {
->>>>>>> 388b6d2 (deploy)
       const fetchProfile = async () => {
         const docRef = doc(db, 'users', user.uid);
         const snap = await getDoc(docRef);
@@ -793,12 +781,7 @@ function App() {
     }
     // eslint-disable-next-line
   }, [value, user]);
-
-<<<<<<< HEAD
-  return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#f5f5f5' }}>
-=======
-  // Only show on supported browsers
+ // Only show on supported browsersAdd commentMore actions
   React.useEffect(() => {
     function handleBeforeInstallPrompt(e) {
       e.preventDefault();
@@ -820,41 +803,41 @@ function App() {
 
   return (
     <Box sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', bgcolor: '#f5f5f5' }}>
-      {/* PWA Install Popover */}
-      <Popover
-        open={Boolean(pwaAnchorEl && deferredPrompt)}
-        anchorEl={pwaAnchorEl}
-        onClose={() => setPwaAnchorEl(null)}
-        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
-        transformOrigin={{ vertical: 'top', horizontal: 'center' }}
-        PaperProps={{ sx: { p: 2, maxWidth: 320 } }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
-          <InfoIcon color="primary" />
-          <Typography variant="subtitle1" fontWeight={600}>Install this app</Typography>
-        </Box>
-        <Typography variant="body2" sx={{ mb: 2 }}>
-          For a better experience, install this app to your device's home screen.
-        </Typography>
-        <Button
-          variant="contained"
-          onClick={async () => {
-            if (deferredPrompt) {
-              deferredPrompt.prompt();
-              const choiceResult = await deferredPrompt.userChoice;
-              if (choiceResult.outcome === 'accepted') {
-                setPwaAnchorEl(null);
-              }
-              setDeferredPrompt(null);
-            }
-          }}
-        >
-          Install
-        </Button>
-      </Popover>
->>>>>>> 388b6d2 (deploy)
       <Container sx={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-        {!isSignedIn ? (
+      {!isSignedIn ? (
+        <>
+          {/* PWA Install Popover */}
+          <Popover
+            open={Boolean(pwaAnchorEl && deferredPrompt)}
+            anchorEl={pwaAnchorEl}
+            onClose={() => setPwaAnchorEl(null)}
+            anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+            transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+            PaperProps={{ sx: { p: 2, maxWidth: 320 } }}
+          >
+            <Box sx={{ display: 'flex', alignItems: 'center', gap: 1, mb: 1 }}>
+              <InfoIcon color="primary" />
+              <Typography variant="subtitle1" fontWeight={600}>Install this app</Typography>
+            </Box>
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              For a better experience, install this app to your device's home screen.
+            </Typography>
+            <Button
+              variant="contained"
+              onClick={async () => {
+                if (deferredPrompt) {
+                  deferredPrompt.prompt();
+                  const choiceResult = await deferredPrompt.userChoice;
+                  if (choiceResult.outcome === 'accepted') {
+                    setPwaAnchorEl(null);
+                  }
+                  setDeferredPrompt(null);
+                }
+              }}
+            >
+              Install
+            </Button>
+          </Popover>
           <Box sx={{ width: '100%', maxWidth: 400, p: 3, bgcolor: 'white', borderRadius: 2, boxShadow: 2 }}>
             <Stack spacing={3} alignItems="center">
               <Typography variant="h5" fontWeight={600} align="center">
@@ -873,7 +856,8 @@ function App() {
               
             </Stack>
           </Box>
-        ) : value === 1 ? (
+        </>
+      ) : value === 1 ? (
           <Box sx={{ width: '100%', maxWidth: 600, p: { xs: 2, sm: 4 }, bgcolor: 'white', borderRadius: 2, boxShadow: 2, m: { xs: 1, sm: 3 } }}>
             <Typography variant="h5" fontWeight={600} align="center" sx={{ mb: 2 }}>Add Inventory Item</Typography>
             <form onSubmit={handleInventorySubmit}>
@@ -1478,15 +1462,10 @@ function App() {
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                       <Box>
                         {/* User/Business Details */}
-<<<<<<< HEAD
-                        <Typography variant="subtitle2">Business: <b>{extraData.businessName || "Business"}</b></Typography>
+                        <Typography variant="subtitle2">Business: <b>{user?.businessName || "Business"}</b></Typography>Add commentMore actions
+
                         
                         <Typography variant="subtitle2">Phone: <b>{user?.phoneNumber || extraData.phone || '-'}</b></Typography>
-=======
-                        <Typography variant="subtitle2">Business: <b>{user?.businessName || "Business"}</b></Typography>
-                        
-                        <Typography variant="subtitle2">Phone: <b>{user?.phone || extraData.phone || '-'}</b></Typography>
->>>>>>> 388b6d2 (deploy)
                         <Typography variant="subtitle2">Email: <b>{user?.email || '-'}</b></Typography>
                         {/* Invoice/Customer Details */}
                         <Typography variant="subtitle2">Invoice ID: <b>{invoiceForm.invoiceId}</b></Typography>
@@ -1525,11 +1504,7 @@ function App() {
                             <Box component="td" sx={{ border: 1, borderColor: '#e0e0e0', p: 1 }}>{item.name}</Box>
                             <Box component="td" sx={{ border: 1, borderColor: '#e0e0e0', p: 1 }}>{item.quantity}</Box>
                             <Box component="td" sx={{ border: 1, borderColor: '#e0e0e0', p: 1 }}>₹{item.sellPrice}</Box>
-<<<<<<< HEAD
                             <Box component="td" sx={{ border: 1, borderColor: '#e0e0e0', p: 1 }}>₹{item.quantity * item.sellPrice}</Box>
-=======
-                            <Box component="td" sx={{ border:  1, borderColor: '#e0e0e0', p: 1 }}>₹{item.quantity * item.sellPrice}</Box>
->>>>>>> 388b6d2 (deploy)
                           </Box>
                         ))}
                       </Box>
@@ -1559,7 +1534,6 @@ function App() {
                       </Box>
                     </Box>
                   </Box>
-<<<<<<< HEAD
                                    {/* End Invoice Preview */}
                 </DialogContent>
                 <DialogActions>
@@ -1582,45 +1556,13 @@ function App() {
                     <Typography variant="h6" fontWeight={600} align="center" sx={{ mb: 2 }}>Invoice</Typography>
                     <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
                       <Box>
-                        <Typography variant="subtitle2">Business: <b>{extraData.businessName || "Business"}</b></Typography>
-                        <Typography variant="subtitle2">Phone: <b>{user?.phoneNumber || extraData.phone || '-'}</b></Typography>
-=======
-                                
-                                          </DialogContent>
-                                          <DialogActions>
-                                            <Button onClick={() => setInvoiceModalOpen(false)} color="inherit">
-                                            Cancel
-                                            </Button>
-                                            <Button onClick={handleInvoiceSubmit} variant="contained" color="primary" disabled={loading}>
-                                            {loading ? 'Saving...' : 'Save Invoice'}
-                                            </Button>
-                                          </DialogActions>
-                                          </Dialog>
-                                        )}
-                                        
-                                        {invoiceViewOpen && selectedInvoiceForView && (
-                                          <Dialog open={invoiceViewOpen} onClose={() => setInvoiceViewOpen(false)} maxWidth="md" fullWidth>
-                                          <DialogTitle>Invoice Receipt</DialogTitle>
-                                          <DialogContent>
-                                            <Box id="invoice-receipt-print" sx={{ mt: 2, p: 2, bgcolor: '#f9f9f9', borderRadius: 2, boxShadow: 1 }}></Box>
-                  <Box id="invoice-receipt-print" sx={{ mt: 2, p: 2, bgcolor: '#f9f9f9', borderRadius: 2, boxShadow: 1 }}>
-                    <Typography variant="h6" fontWeight={600} align="center" sx={{ mb: 2 }}>Invoice</Typography>
-                    <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-                      <Box>
-                       
-                        <Typography variant="subtitle2">
-                          Business: <b>
-                            { profileBusinessName }
-                          </b>
-                        </Typography>
-                        <Typography variant="subtitle2">Phone: <b>{profilePhone}</b></Typography>
->>>>>>> 388b6d2 (deploy)
+                        <Typography variant="subtitle2">Business: <b> { profileBusinessName }</b></Typography>
+                          <Typography variant="subtitle2">Phone: <b>{ profilePhone }</b></Typography>
                         <Typography variant="subtitle2">Email: <b>{user?.email || '-'}</b></Typography>
                         <Typography variant="subtitle2">Invoice ID: <b>{selectedInvoiceForView.invoiceId}</b></Typography>
                         <Typography variant="subtitle2">Date: <b>{selectedInvoiceForView.date}</b></Typography>
                         <Typography variant="subtitle2">Customer: <b>{selectedInvoiceForView.customerName}</b></Typography>
                         <Typography variant="subtitle2">Customer Phone: <b>{selectedInvoiceForView.customerPhone}</b></Typography>
-<<<<<<< HEAD
                         {selectedInvoiceForView.customerDetails && <Typography variant="subtitle2">Details: <b>{selectedInvoiceForView.customerDetails}</b></Typography>}
                       </Box>
                       <Box textAlign="right">
@@ -1628,19 +1570,6 @@ function App() {
                         <Typography variant="subtitle2">Discount: <b>₹{selectedInvoiceForView.discount || 0}</b></Typography>
                         <Typography variant="subtitle2">Paid: <b>₹{selectedInvoiceForView.paid || 0}</b></Typography>
                         <Typography variant="subtitle2">Due: <b>₹{(() => {
-=======
-                        {selectedInvoiceForView.customerDetails && (
-                          <Typography variant="subtitle2">
-                            Details: <b>{selectedInvoiceForView.customerDetails}</b>
-                          </Typography>
-                        )}
-                        </Box>
-                        <Box textAlign="right">
-                          <Typography variant="subtitle2">GST: <b>{selectedInvoiceForView.gst || 0}%</b></Typography>
-                          <Typography variant="subtitle2">Discount: <b>₹{selectedInvoiceForView.discount || 0}</b></Typography>
-                          <Typography variant="subtitle2">Paid: <b>₹{selectedInvoiceForView.paid || 0}</b></Typography>
-                          <Typography variant="subtitle2">Due: <b>{(() => {
->>>>>>> 388b6d2 (deploy)
                           const subtotal = selectedInvoiceForView.items.reduce((sum, item) => sum + (item.quantity * item.sellPrice), 0);
                           const gst = selectedInvoiceForView.gst ? (subtotal * selectedInvoiceForView.gst / 100) : 0;
                           const discount = selectedInvoiceForView.discount || 0;
@@ -1720,11 +1649,7 @@ function App() {
             )}
           </Box>
         ) : value === 3 ? (
-<<<<<<< HEAD
           <Box sx={{ width: '100%', maxWidth: 500, p: { xs: 2, sm: 4 }, bgcolor: 'white', borderRadius: 2, boxShadow: 2, m: { xs: 1, sm: 3 } }}>
-=======
-          <Box sx={{ width: '100%',  maxWidth: 500, p: { xs: 2, sm: 4 }, bgcolor: 'white', borderRadius: 2, boxShadow: 2, m: { xs: 1, sm: 3 } }}>
->>>>>>> 388b6d2 (deploy)
             <Typography variant="h5" fontWeight={600} align="center" sx={{ mb: 2 }}>Profile</Typography>
             {/* Fetch and show saved business name and phone from DB on tab open */}
             <form onSubmit={async (e) => {
@@ -1750,10 +1675,6 @@ function App() {
                 setProfileError('Error updating profile.');
               }
             }}>
-<<<<<<< HEAD
-=======
-           
->>>>>>> 388b6d2 (deploy)
               <TextField
                 margin="dense"
                 label="Email"
@@ -1806,10 +1727,6 @@ function App() {
                   const auth = getAuth();
                   await signOut(auth);
                   setIsSignedIn(false);
-<<<<<<< HEAD
-=======
-   
->>>>>>> 388b6d2 (deploy)
                   setUser(null);
                   setExtraData({ phone: '', businessName: '' });
                 }}
